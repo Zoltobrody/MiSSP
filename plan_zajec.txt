@@ -1,0 +1,44 @@
+﻿from pulp import *
+
+dni_tygodnia = ["Poniedziałek","Wtorek","Środa","Czwartek","Piątek",]
+lista_osob = ["Ania","Stefan","Hektor","Olaf","Lidlia","Piotr"]
+stawka_godzinowa = {"Ania": 100, "Stefan": 50, "Hektor": 60, "Olaf": 40, "Lidlia": 110, "Piotr": 70}
+
+prob = LpProblem('Minimalizacja_wyplaty_wynagrodzen', LpMinimize)
+
+poniedziałek = LpVariable.dict("Poniedziałek",
+                           (osoba for osoba in lista_osob), cat = 'Binary')
+wtorek = LpVariable.dict("Wtorek",
+                           (osoba for osoba in lista_osob), cat = 'Binary')
+środa = LpVariable.dict("Środa",
+                           (osoba for osoba in lista_osob), cat = 'Binary')
+czwartek = LpVariable.dict("Czwartek",
+                           (osoba for osoba in lista_osob), cat = 'Binary')
+piątek = LpVariable.dict("Piątek",
+                           (osoba for osoba in lista_osob), cat = 'Binary')
+#4 godziny pracy sklepu
+prob += 4*(lpSum([stawka_godzinowa[i]*poniedziałek[i] for i in lista_osob]) + lpSum([stawka_godzinowa[i]*wtorek[i] for i in lista_osob])
+           + lpSum([stawka_godzinowa[i]*środa[i] for i in lista_osob]) + lpSum([stawka_godzinowa[i]*czwartek[i] for i in lista_osob])
+           + lpSum([stawka_godzinowa[i]*piątek[i] for i in lista_osob]))
+#warunki dla kazdego pracownika, 
+prob += wtorek["Stefan"] + środa["Stefan"] + czwartek["Stefan"] + piątek["Stefan"] == 0
+prob += czwartek["Hektor"] + piątek["Hektor"] == 0
+prob += poniedziałek["Lidlia"] + wtorek["Lidlia"] + środa["Lidlia"] == 0
+prob += czwartek["Piotr"] + piątek["Piotr"] == 0
+#sprawdzenie czy kazdy przychodzi maks 3 razy w tygodniu
+for i in lista_osob:
+  prob += poniedziałek[i] + wtorek[i] + środa[i] + czwartek[i] + piątek[i] <= 3
+
+#warunki dla kazdego dnia
+prob += lpSum([poniedziałek[i] for i in lista_osob]) == 2
+prob += lpSum([wtorek[i] for i in lista_osob]) == 1
+prob += lpSum([środa[i] for i in lista_osob]) == 1
+prob += lpSum([czwartek[i] for i in lista_osob]) == 1
+prob += lpSum([piątek[i] for i in lista_osob]) == 3
+
+prob.solve()
+
+for v in prob.variables():
+      if v.varValue == True:
+        print(v.name, "=", v.varValue)
+print("Minimalny koszt wynagrodzeń pracowników wynosi: {}zł ".format(value(prob.objective)))  

@@ -1,0 +1,44 @@
+# Import PuLP modeler functions
+from pulp import *
+# Create the 'prob' variable to contain the problem data
+prob = LpProblem("The_Moc_Problem",LpMinimize)
+
+# wariables of current
+i1=LpVariable("PradR1",3,5)
+i2=LpVariable("PradR2",1,3)
+i3=LpVariable("PradR3",1,3)
+i4=LpVariable("PradR4",1,3)
+i5=LpVariable("PradR5",3,5)
+
+
+# The objective function is added to 'prob' first
+prob += i1 + i2 , "Prad minimalny "
+# The  constraints are entered
+
+prob += i1 + i4 == i2 + i5, "rownanie_prodowe_1"
+prob += i2 + i3 == i5, "rownanie_prodowe_2"
+prob += i1 == i3 + i4, "rownanie_pradowe_3"
+
+
+# The problem data is written to an .lp file
+prob.writeLP("ResistorModel.lp")
+
+# The problem is solved using PuLP's choice of Solver
+prob.solve()
+
+# The status of the solution is printed to the screen
+print ("Status:", LpStatus[prob.status])
+
+# Each of the variables is printed with it's resolved optimum value
+a=[6, 10, 4, 7, 3]
+i=0
+for v in prob.variables():
+    print (v.name, "=", v.varValue,"mA")
+    #wyliczenie rezystancji rezystorow
+    print ("Rezystor R",i+1,"=",a[i]/v.varValue,"kohm")
+    i=i+1
+    print("------")
+
+# The optimised objective function value is printed to the screen
+print ("Moc minimalna = ", value(prob.objective)*13,"mW")
+

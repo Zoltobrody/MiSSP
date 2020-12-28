@@ -1,0 +1,32 @@
+﻿# Import PuLP modeler functions
+from pulp import *
+# Create the 'prob' variable to contain the problem data
+prob = LpProblem("The_Window_Problem",LpMaximize)
+
+# creating variables of 2 windows
+x1=LpVariable("OknaAluminiowe",0)
+x2=LpVariable("OknaDrewniane",0)
+
+
+# The objective function is added to 'prob' first
+prob += 3000*x1 + 5000*x2 , "Suma zysku "
+# The  constraints are entered
+prob += 1*x1 + 0*x2 <= 4, "Wymogi czasowe w fabryce 1"
+prob += 0*x1 + 2*x2 <= 12.0, "Wymogi czasowe w fabryce 2"
+prob += 3*x1 + 2*x2 <= 18, "Wymogi czasowe w fabryce 3"
+
+
+# The problem data is written to an .lp file
+prob.writeLP("WindowModel.lp")
+
+# The problem is solved using PuLP's choice of Solver
+prob.solve()
+
+# The status of the solution is printed to the screen
+print ("Status:", LpStatus[prob.status])
+
+# Each of the variables is printed with it's resolved optimum value
+for v in prob.variables():
+    print (v.name, "=", v.varValue)
+# The optimised objective function value is printed to the screen
+print ("Total sales in PLN = ", value(prob.objective))

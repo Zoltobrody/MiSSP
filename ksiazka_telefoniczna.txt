@@ -1,0 +1,28 @@
+﻿
+#stworzenie klasy odpowiadajacej telefonowi
+class NumerTelefonu:  
+    def __init__(self, numer_telefonu):
+        self.numer_telefonu = numer_telefonu
+        self.wojewodztwo = self.wojewodztwo()
+        if len(self.numer_telefonu) == 9: 
+          print("prawidlowy numer")
+        else:
+          print("error")
+  
+    def __str__(self):
+#przypisanie nazw do cyfr 
+        lista_znakow = ["jeden", "dwa", "trzy", "cztery", "pieć", "sześć", "siedem", "osiem", "dziewięć"]
+        numer_to_string = [None] * len(lista_znakow)
+        for index, a in enumerate(self.numer_telefonu):
+          numer_to_string[index] = lista_znakow[int(a)-1]
+        return "{}, {}, {}, {}, {}, {}, {}, {}, {}".format(numer_to_string[0], numer_to_string[1], numer_to_string[2], numer_to_string[3], numer_to_string[4],
+                                                           numer_to_string[5], numer_to_string[6], numer_to_string[7], numer_to_string[8])
+
+    def wojewodztwo(self):
+        numer_telefonu = self.numer_telefonu[0:2]
+        kierunkowy_lodz = ["42"]
+        if numer_telefonu in kierunkowy_lodz:
+          print("Lodz")
+numer_lodz = NumerTelefonu("426877968")
+numer_lodz.wojewodztwo
+print(numer_lodz)

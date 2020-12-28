@@ -1,0 +1,38 @@
+﻿#challeng 0.1
+for numer, przedmioty in enumerate(zajecia):
+    #print("przedmiot {} ma numer {} i odbywa się w {}".format(przedmioty,numer,dnityg[numer]))
+    if (numer >= 2):
+      print("zajecia {}".format(przedmioty))
+      
+
+
+for numer, przedmioty in enumerate(zajecia):
+    #print("przedmiot {} ma numer {} i odbywa się w {}".format(przedmioty,numer,dnityg[numer]))
+    if (numer != 2):
+      print("zajecia {}".format(przedmioty))
+
+
+#challeng 0.2
+
+def ile(dzien):
+    for a,b in enumerate(dnityg):
+        if b==dzien :
+          zmienna=a
+    return len(zajecia[zmienna])
+    
+
+print(sorted(dnityg,key=ile,reverse=True))
+
+
+#challeng 0.3
+
+
+def ile_mispow(plan_dnia):
+    ilosc_mispow = 0
+    for zajecie in plan_dnia:
+        if "misp" in zajecie:
+            ilosc_mispow +=1
+        return ilosc_mispow
+
+print(max(zajecia, key = ile_mispow))
+print(max(zip(dnityg,zajecia), key = lambda para: ile_mispow(para[1]))[0])
